@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace OS.Toolbox.DinamicObjects
+namespace OS.Toolbox.DynamicObjects
 {
     public class DynamicTableColumn<T> : IDynamicTableColumn
     {

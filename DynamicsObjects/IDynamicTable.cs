@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace OS.Toolbox.DinamicObjects
+namespace OS.Toolbox.DynamicObjects
 {
     public interface IDynamicTable
     {
@@ -8,6 +8,8 @@ namespace OS.Toolbox.DinamicObjects
 
         List<dynamic> Rows { get; }
         List<IDynamicTableColumn> Columns { get; }
+
+        IDynamicTableColumn GetColumn(string name);
 
         void AddRow(dynamic row);
         void AddRows(List<dynamic> rows);
@@ -18,11 +20,14 @@ namespace OS.Toolbox.DinamicObjects
         void ResetTable();
 
         string AsCsv();
-        string AsCsv(bool withHeader, string delimiter, bool useQuotesForFields);
+        string AsCsv(bool withHeader, char delimiter, bool useQuotesForFields);
+
+        void FromCsv(IEnumerable<string> content);
+        void FromCsv(IEnumerable<string> content, bool withHeader, char delimiter, bool useQuotesForFields);
     }
 
     public enum DynamicTableType
-    {
+    {        
         Expandeable,
         DefineOnce,
         WellFormet

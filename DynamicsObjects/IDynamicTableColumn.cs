@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OS.Toolbox.DinamicObjects
+namespace OS.Toolbox.DynamicObjects
 {
     public interface IDynamicTableColumn
     {

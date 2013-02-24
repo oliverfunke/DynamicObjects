@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\TestConsole.csproj", "{D70C9A40-2056-4509-ACD7-3DC232D596EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DinamicObjects", "DynamicsObjects\DinamicObjects.csproj", "{038A30BB-90F7-4AE1-832B-E86CB1DA2CE3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicObjects", "DynamicsObjects\DynamicObjects.csproj", "{038A30BB-90F7-4AE1-832B-E86CB1DA2CE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{E6D3EDC8-4F77-4F5B-AB73-B444094173B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +39,16 @@ Global
 		{038A30BB-90F7-4AE1-832B-E86CB1DA2CE3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{038A30BB-90F7-4AE1-832B-E86CB1DA2CE3}.Release|x86.ActiveCfg = Release|x86
 		{038A30BB-90F7-4AE1-832B-E86CB1DA2CE3}.Release|x86.Build.0 = Release|x86
+		{E6D3EDC8-4F77-4F5B-AB73-B444094173B3}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{E6D3EDC8-4F77-4F5B-AB73-B444094173B3}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{E6D3EDC8-4F77-4F5B-AB73-B444094173B3}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{E6D3EDC8-4F77-4F5B-AB73-B444094173B3}.Debug|x86.ActiveCfg = Debug|x86
+		{E6D3EDC8-4F77-4F5B-AB73-B444094173B3}.Debug|x86.Build.0 = Debug|x86
+		{E6D3EDC8-4F77-4F5B-AB73-B444094173B3}.Release|Any CPU.ActiveCfg = Release|x86
+		{E6D3EDC8-4F77-4F5B-AB73-B444094173B3}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{E6D3EDC8-4F77-4F5B-AB73-B444094173B3}.Release|Mixed Platforms.Build.0 = Release|x86
+		{E6D3EDC8-4F77-4F5B-AB73-B444094173B3}.Release|x86.ActiveCfg = Release|x86
+		{E6D3EDC8-4F77-4F5B-AB73-B444094173B3}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

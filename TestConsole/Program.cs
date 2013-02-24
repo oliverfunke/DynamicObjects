@@ -1,7 +1,8 @@
-﻿using OS.Toolbox.DinamicObjects;
+﻿using OS.Toolbox.DynamicObjects;
 using System;
 using System.Dynamic;
 using System.IO;
+using OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest;
 
 namespace OS.Toolbox.TestConsole
 {
@@ -9,6 +10,7 @@ namespace OS.Toolbox.TestConsole
     {
         static void Main(string[] args)
         {
+            /*
             IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);            
             dynamic row;
 
@@ -25,8 +27,13 @@ namespace OS.Toolbox.TestConsole
             
             using (StreamWriter writer = new StreamWriter("test1.csv"))
             {
-                writer.Write(table.AsCsv(true, ",", true));
+                writer.Write(table.AsCsv(true, ',', true));
             }
+            */
+
+            UseCasesUnitTest test = new UseCasesUnitTest();
+            test.SetUp();
+            test.ExportAndImport_CSV_Semicolon_WithoutHeader_WithoutQuotes();
 
             Console.ReadKey();
         }
