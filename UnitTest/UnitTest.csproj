@@ -52,6 +52,8 @@
   <ItemGroup>
     <Compile Include="DynamicTableUnitTest\FunctionsUnitTest.cs" />
     <Compile Include="DynamicTableUnitTest\UseCasesUnitTest.cs" />
+    <Compile Include="ExpandoObjectSerializerUnitTest\FunctionsUnitTest.cs" />
+    <Compile Include="ExpandoObjectSerializerUnitTest\UseCasesUnitTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

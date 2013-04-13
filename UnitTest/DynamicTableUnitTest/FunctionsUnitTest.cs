@@ -4,6 +4,7 @@ using OS.Toolbox.DynamicObjects;
 using System.Dynamic;
 using System.Collections.Generic;
 using System;
+using System.Xml;
 
 namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
 {
@@ -16,7 +17,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void PreDefineColumns_Standard()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
 
             //set columns
             table.PreDefineColumns(
@@ -43,7 +44,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void PreDefineColumns_AlreadyDefined()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
 
             //set columns
             table.PreDefineColumns(
@@ -78,7 +79,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void PreDefineColumns_Null()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
 
             //set columns
             try
@@ -95,7 +96,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void PreDefineColumns_Empty()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
 
             //set columns
             try
@@ -112,7 +113,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void PreDefineColumns_Error_NameNull()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
 
             //set columns
             try
@@ -135,7 +136,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void PreDefineColumns_Error_NameEmpty()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
 
             //set columns
             try
@@ -158,7 +159,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void PreDefineColumns_Error_NameNotUnique()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
 
             //set columns
             try
@@ -185,7 +186,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void AddRow_Error_WrongType()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
 
             //add values
@@ -212,7 +213,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void AddRow_Error_WellFormet_MissingElement()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.WellFormet);
+            IDynamicTable table = new DynamicTable(DynamicTableType.WellFormed);
             dynamic row;
 
             //add values
@@ -268,7 +269,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void AddRow_Error_AdditionalElement_WellFormet()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.WellFormet);
+            IDynamicTable table = new DynamicTable(DynamicTableType.WellFormed);
             dynamic row;
 
             //add values
@@ -301,7 +302,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void AddRows_Error_Rollback()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
             dynamic rowB;
 
@@ -342,7 +343,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void GetColumn_Standard()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
 
             IDynamicTableColumn column;
@@ -365,7 +366,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void GetColumn_NotExisting()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
 
             IDynamicTableColumn column;
@@ -385,7 +386,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void GetColumn_Null()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
 
             IDynamicTableColumn column;
@@ -405,7 +406,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void GetColumn_Empty()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
 
             IDynamicTableColumn column;
@@ -425,7 +426,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void GetColumn_NotIntialized()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             
             IDynamicTableColumn column;
             
@@ -441,7 +442,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void AsCsv_Standard()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
             string csvContent;
             string expectedContent;
@@ -471,7 +472,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void AsCsv_Comma_WithHeaders_WithQuotes()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
             string csvContent;
             string expectedContent;
@@ -502,7 +503,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void AsCsv_Semicolon_WithoutHeaders_WithoutQuotes()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
             string csvContent;
             string expectedContent;
@@ -532,7 +533,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void AsCsv_NotInitialized()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             string csvContent;
 
             //get csv
@@ -545,7 +546,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void AsCsv_Empty_WithHeaders()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             string csvContent;
             string expectedContent;
 
@@ -570,7 +571,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void AsCsv_Empty_WithoutHeaders()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             string csvContent;
             
             //set columns
@@ -596,7 +597,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void FromCsv_Standard()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
 
             List<string> csvContent = new List<string>()
@@ -637,7 +638,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void FromCsv_Comma_WithHeaders_WithQuotes()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
 
             List<string> csvContent = new List<string>()
@@ -679,7 +680,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void FromCsv_Semicolon_WithoutHeaders_WithoutQuotes()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
 
             List<string> csvContent = new List<string>()
@@ -720,7 +721,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void FromCsv_WithHeaders_OtherSortOrderInFile()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
 
             List<string> csvContent = new List<string>()
@@ -762,7 +763,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void FromCsv_SeparatorInField()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
 
             List<string> csvContent = new List<string>()
@@ -804,7 +805,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void FromCsv_Empty()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
 
             List<string> csvContent = new List<string>();
             
@@ -828,7 +829,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void FromCsv_Null()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
 
             List<string> csvContent = new List<string>();
 
@@ -852,7 +853,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void FromCsv_NoColumns()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
 
             List<string> csvContent = new List<string>()
             {
@@ -874,7 +875,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void FromCsv_AlreadyContainsRows()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
 
             List<string> csvContent = new List<string>()
             {
@@ -912,7 +913,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void FromCsv_EmptyLineOrWhitespace()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
 
             List<string> csvContent = new List<string>()
@@ -956,7 +957,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void FromCsv_WrongNumberOfElements()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
 
             List<string> csvContent = new List<string>()
             {
@@ -991,7 +992,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void FromCsv_WrongType()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
 
             List<string> csvContent = new List<string>()
             {
@@ -1024,9 +1025,9 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         }
 
         [Test]
-        public void FromCsv_WrongColumnNames()
+        public void FromCsv_NotUniqueColumnNames()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
 
             List<string> csvContent = new List<string>()
             {
@@ -1056,6 +1057,757 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
             }
         }
 
+        [Test]
+        public void FromCsv_WrongColumnNames()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+
+            List<string> csvContent = new List<string>()
+            {
+                "FirstName,Abc,Age,Street",
+                "\"Hans\",\"Mueller\",30,\"\"",
+                 "\"\",\"Meier\",0,\"Main street\""
+            };
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1),
+                    new DynamicTableColumn<string>("Street"),
+                });
+
+            //import
+            try
+            {
+                table.FromCsv(csvContent, true, ',', true);
+                Assert.Fail();
+            }
+            catch (FormatException)
+            {
+            }
+        }
+
+        #endregion
+
+        #region AsXml
+
+        [Test]
+        public void AsXml_Standard()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+            dynamic row;
+            string csvContent;
+            string expectedContent;
+
+            //add values
+            row = new ExpandoObject();
+            row.FirstName = "Hans";
+            row.LastName = "Mueller";
+            row.Age = 30;
+            table.AddRow(row);
+
+            row = new ExpandoObject();
+            row.LastName = "Meier";
+            row.Street = "Main street";
+            table.AddRow(row);
+
+            //get csv
+            csvContent = table.AsXml();
+
+            //compare
+            expectedContent =
+                "<DynamicTable>" + Environment.NewLine +
+                "  <Rows>" + Environment.NewLine +
+                "    <Row>" + Environment.NewLine +
+                "      <FirstName value=\"Hans\" />" + Environment.NewLine +
+                "      <LastName value=\"Mueller\" />" + Environment.NewLine +
+                "      <Age value=\"30\" />" + Environment.NewLine +
+                "      <Street value=\"\" />" + Environment.NewLine +
+                "    </Row>" + Environment.NewLine +
+                "    <Row>" + Environment.NewLine +
+                "      <FirstName value=\"\" />" + Environment.NewLine +
+                "      <LastName value=\"Meier\" />" + Environment.NewLine +
+                "      <Age value=\"0\" />" + Environment.NewLine +
+                "      <Street value=\"Main street\" />" + Environment.NewLine +
+                "    </Row>" + Environment.NewLine +
+                "  </Rows>" + Environment.NewLine +
+                "</DynamicTable>";
+
+            Assert.AreEqual(expectedContent, csvContent);
+        }
+
+        [Test]
+        public void AsXml_NotInitialized()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+            string csvContent;
+
+            //get csv
+            csvContent = table.AsXml();
+
+            //compare
+            Assert.AreEqual("", csvContent);
+        }
+
+        [Test]
+        public void AsXml_Empty()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+            string csvContent;
+            string expectedContent;
+
+            //set columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName", ""),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1)
+                });
+
+            //get csv
+            csvContent = table.AsXml();
+
+            //compare
+            expectedContent =
+                 "<DynamicTable>" + Environment.NewLine +
+                 "  <Rows />" + Environment.NewLine +
+                 "</DynamicTable>";
+
+            Assert.AreEqual(expectedContent, csvContent);
+        }
+
+        #endregion
+
+        #region FromXml
+
+        [Test]
+        public void FromXml_Standard()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+            dynamic row;
+
+            List<string> xmlContent = new List<string>()
+            {
+                "<DynamicTable>" + Environment.NewLine,
+                "  <Rows>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"Hans\" />" + Environment.NewLine,
+                "      <LastName value=\"Mueller\" />" + Environment.NewLine,
+                "      <Age value=\"30\" />" + Environment.NewLine,
+                "      <Street value=\"\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"\" />" + Environment.NewLine,
+                "      <LastName value=\"Meier\" />" + Environment.NewLine,
+                "      <Age value=\"0\" />" + Environment.NewLine,
+                "      <Street value=\"Main street\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "  </Rows>" + Environment.NewLine,
+                "</DynamicTable>"
+            };
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age"),
+                    new DynamicTableColumn<string>("Street"),
+                });
+
+            //import
+            table.FromXml(xmlContent);
+
+            //compare    
+            Assert.AreEqual(2, table.Rows.Count);
+
+            row = table.Rows[0];
+            Assert.AreEqual("Hans", row.FirstName);
+            Assert.AreEqual("Mueller", row.LastName);
+            Assert.AreEqual(30, row.Age);
+            Assert.AreEqual("", row.Street);
+
+            row = table.Rows[1];
+            Assert.AreEqual("", row.FirstName);
+            Assert.AreEqual("Meier", row.LastName);
+            Assert.AreEqual(0, row.Age);
+            Assert.AreEqual("Main street", row.Street);
+        }
+
+        [Test]
+        public void FromXml_OtherSortOrderInFile()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+            dynamic row;
+
+            List<string> xmlContent = new List<string>()
+            {
+                "<DynamicTable>" + Environment.NewLine,
+                "  <Rows>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <Age value=\"30\" />" + Environment.NewLine,
+                "      <FirstName value=\"Hans\" />" + Environment.NewLine,
+                "      <LastName value=\"Mueller\" />" + Environment.NewLine,                
+                "      <Street value=\"\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <Age value=\"0\" />" + Environment.NewLine,
+                "      <FirstName value=\"\" />" + Environment.NewLine,
+                "      <LastName value=\"Meier\" />" + Environment.NewLine,                
+                "      <Street value=\"Main street\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "  </Rows>" + Environment.NewLine,
+                "</DynamicTable>"
+            };
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age"),
+                    new DynamicTableColumn<string>("Street"),
+                });
+
+            //import
+            table.FromXml(xmlContent);
+
+            //compare    
+            Assert.AreEqual(2, table.Rows.Count);
+
+            row = table.Rows[0];
+            Assert.AreEqual("Hans", row.FirstName);
+            Assert.AreEqual("Mueller", row.LastName);
+            Assert.AreEqual(30, row.Age);
+            Assert.AreEqual("", row.Street);
+
+            row = table.Rows[1];
+            Assert.AreEqual("", row.FirstName);
+            Assert.AreEqual("Meier", row.LastName);
+            Assert.AreEqual(0, row.Age);
+            Assert.AreEqual("Main street", row.Street);
+        }
+      
+        [Test]
+        public void FromXml_Empty()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+
+            List<string> xmlContent = new List<string>();
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1),
+                    new DynamicTableColumn<string>("Street"),
+                });
+
+            //import
+            table.FromXml(xmlContent);
+
+            //compare    
+            Assert.AreEqual(0, table.Rows.Count);
+        }
+
+        [Test]
+        public void FromXml_Null()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+
+            List<string> csvContent = new List<string>();
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1),
+                    new DynamicTableColumn<string>("Street"),
+                });
+
+            //import
+            table.FromXml(null);
+
+            //compare    
+            Assert.AreEqual(0, table.Rows.Count);
+        }
+
+        [Test]
+        public void FromXml_NoColumns()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+
+            List<string> xmlContent = new List<string>()
+            {
+                "<DynamicTable>" + Environment.NewLine,
+                "  <Rows>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"Hans\" />" + Environment.NewLine,
+                "      <LastName value=\"Mueller\" />" + Environment.NewLine,
+                "      <Age value=\"30\" />" + Environment.NewLine,
+                "      <Street value=\"\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"\" />" + Environment.NewLine,
+                "      <LastName value=\"Meier\" />" + Environment.NewLine,
+                "      <Age value=\"0\" />" + Environment.NewLine,
+                "      <Street value=\"Main street\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "  </Rows>" + Environment.NewLine,
+                "</DynamicTable>"
+            };
+
+            //import
+            try
+            {
+                table.FromXml(xmlContent);
+                Assert.Fail();
+            }
+            catch (NotSupportedException)
+            {
+            }
+        }
+
+        [Test]
+        public void FromXml_AlreadyContainsRows()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+
+            List<string> xmlContent = new List<string>()
+            {
+                "<DynamicTable>" + Environment.NewLine,
+                "  <Rows>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"Hans\" />" + Environment.NewLine,
+                "      <LastName value=\"Mueller\" />" + Environment.NewLine,
+                "      <Age value=\"30\" />" + Environment.NewLine,
+                "      <Street value=\"\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"\" />" + Environment.NewLine,
+                "      <LastName value=\"Meier\" />" + Environment.NewLine,
+                "      <Age value=\"0\" />" + Environment.NewLine,
+                "      <Street value=\"Main street\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "  </Rows>" + Environment.NewLine,
+                "</DynamicTable>"
+            };
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1),
+                    new DynamicTableColumn<string>("Street"),
+                });
+
+            //import
+            table.FromXml(xmlContent);
+
+            //compare    
+            Assert.AreEqual(2, table.Rows.Count);
+
+            //import again
+            try
+            {
+                table.FromXml(xmlContent);
+                Assert.Fail();
+            }
+            catch (NotSupportedException)
+            {
+            }
+        }
+
+        [Test]
+        public void FromXml_EmptyLineOrWhitespace()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+            dynamic row;
+
+            List<string> xmlContent = new List<string>()
+            {
+                "<DynamicTable>" + Environment.NewLine,
+                "  <Rows>" + Environment.NewLine,
+                "",
+                "   ",
+                null,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"Hans\" />" + Environment.NewLine,
+                "      <LastName value=\"Mueller\" />" + Environment.NewLine,
+                "      <Age value=\"30\" />" + Environment.NewLine,
+                "      <Street value=\"\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"\" />" + Environment.NewLine,
+                "      <LastName value=\"Meier\" />" + Environment.NewLine,
+                "      <Age value=\"0\" />" + Environment.NewLine,
+                "      <Street value=\"Main street\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "  </Rows>" + Environment.NewLine,
+                "</DynamicTable>"
+            };
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1),
+                    new DynamicTableColumn<string>("Street"),
+                });
+
+            //import
+            table.FromXml(xmlContent);
+
+            //compare    
+            Assert.AreEqual(2, table.Rows.Count);
+
+            row = table.Rows[0];
+            Assert.AreEqual("Hans", row.FirstName);
+            Assert.AreEqual("Mueller", row.LastName);
+            Assert.AreEqual(30, row.Age);
+            Assert.AreEqual("", row.Street);
+
+            row = table.Rows[1];
+            Assert.AreEqual("", row.FirstName);
+            Assert.AreEqual("Meier", row.LastName);
+            Assert.AreEqual(0, row.Age);
+            Assert.AreEqual("Main street", row.Street);
+        }
+
+        [Test]
+        public void FromXml_WrongNumberOfElements()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+
+            List<string> xmlContent = new List<string>()
+            {
+                "<DynamicTable>" + Environment.NewLine,
+                "  <Rows>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"Hans\" />" + Environment.NewLine,
+                "      <LastName value=\"Mueller\" />" + Environment.NewLine,                
+                "      <Street value=\"\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"\" />" + Environment.NewLine,
+                "      <LastName value=\"Meier\" />" + Environment.NewLine,
+                "      <Age value=\"0\" />" + Environment.NewLine,
+                "      <Street value=\"Main street\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "  </Rows>" + Environment.NewLine,
+                "</DynamicTable>"
+            };
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1),
+                    new DynamicTableColumn<string>("Street"),
+                });
+
+            //import
+            try
+            {
+                table.FromXml(xmlContent);
+                Assert.Fail();
+            }
+            catch (FormatException)
+            {
+            }
+
+            //compare    
+            Assert.AreEqual(0, table.Rows.Count);
+        }
+
+        [Test]
+        public void FromXml_WrongType()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+
+            List<string> xmlContent = new List<string>()
+            {
+                "<DynamicTable>" + Environment.NewLine,
+                "  <Rows>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"Hans\" />" + Environment.NewLine,
+                "      <LastName value=\"Mueller\" />" + Environment.NewLine,
+                "      <Age value=\"abc\" />" + Environment.NewLine,
+                "      <Street value=\"\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"\" />" + Environment.NewLine,
+                "      <LastName value=\"Meier\" />" + Environment.NewLine,
+                "      <Age value=\"0\" />" + Environment.NewLine,
+                "      <Street value=\"Main street\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "  </Rows>" + Environment.NewLine,
+                "</DynamicTable>"
+            };
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1),
+                    new DynamicTableColumn<string>("Street"),
+                });
+
+            //import
+            try
+            {
+                table.FromXml(xmlContent);
+                Assert.Fail();
+            }
+            catch (FormatException)
+            {
+            }
+
+            //compare    
+            Assert.AreEqual(0, table.Rows.Count);
+        }
+
+        [Test]
+        public void FromXml_NotUniqueColumnNames()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+
+            List<string> xmlContent = new List<string>()
+            {
+                "<DynamicTable>" + Environment.NewLine,
+                "  <Rows>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <LastName value=\"Hans\" />" + Environment.NewLine,
+                "      <LastName value=\"Mueller\" />" + Environment.NewLine,
+                "      <Age value=\"30\" />" + Environment.NewLine,
+                "      <Street value=\"\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"\" />" + Environment.NewLine,
+                "      <LastName value=\"Meier\" />" + Environment.NewLine,
+                "      <Age value=\"0\" />" + Environment.NewLine,
+                "      <Street value=\"Main street\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "  </Rows>" + Environment.NewLine,
+                "</DynamicTable>"
+            };
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1),
+                    new DynamicTableColumn<string>("Street"),
+                });
+
+            //import
+            try
+            {
+                table.FromXml(xmlContent);
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            {
+            }
+        }
+
+        [Test]
+        public void FromXml_WrongColumnNames()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+
+            List<string> xmlContent = new List<string>()
+            {
+                "<DynamicTable>" + Environment.NewLine,
+                "  <Rows>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"Hans\" />" + Environment.NewLine,
+                "      <Aaaaaaaaa value=\"Mueller\" />" + Environment.NewLine,
+                "      <Age value=\"30\" />" + Environment.NewLine,
+                "      <Street value=\"\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"\" />" + Environment.NewLine,
+                "      <LastName value=\"Meier\" />" + Environment.NewLine,
+                "      <Age value=\"0\" />" + Environment.NewLine,
+                "      <Street value=\"Main street\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "  </Rows>" + Environment.NewLine,
+                "</DynamicTable>"
+            };
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1),
+                    new DynamicTableColumn<string>("Street"),
+                });
+
+            //import
+            try
+            {
+                table.FromXml(xmlContent);
+                Assert.Fail();
+            }
+            catch (FormatException)
+            {
+            }
+        }
+
+        [Test]
+        public void FromXml_AttributeMissing()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+
+            List<string> xmlContent = new List<string>()
+            {
+                "<DynamicTable>" + Environment.NewLine,
+                "  <Rows>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"Hans\" />" + Environment.NewLine,
+                "      <LastName />" + Environment.NewLine,
+                "      <Age value=\"30\" />" + Environment.NewLine,
+                "      <Street value=\"\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"\" />" + Environment.NewLine,
+                "      <LastName value=\"Meier\" />" + Environment.NewLine,
+                "      <Age value=\"0\" />" + Environment.NewLine,
+                "      <Street value=\"Main street\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "  </Rows>" + Environment.NewLine,
+                "</DynamicTable>"
+            };
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1),
+                    new DynamicTableColumn<string>("Street"),
+                });
+
+            //import
+            try
+            {
+                table.FromXml(xmlContent);
+                Assert.Fail();
+            }
+            catch (FormatException)
+            {
+            }
+        }
+
+        [Test]
+        public void FromXml_WrongContentFormat()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+
+            List<string> xmlContent = new List<string>()
+            {
+                "<DynamicTable>" + Environment.NewLine,
+                "  <Rowsssssssssss>" + Environment.NewLine,
+                "    <Rowwwww>" + Environment.NewLine,
+                "      <FirstName value=\"Hans\" />" + Environment.NewLine,
+                "      <LastName value=\"Mueller\" />" + Environment.NewLine,
+                "      <Age value=\"30\" />" + Environment.NewLine,
+                "      <Street value=\"\" />" + Environment.NewLine,
+                "    </Rowwwww>" + Environment.NewLine,
+                "    <Rowwwww>" + Environment.NewLine,
+                "      <FirstName value=\"\" />" + Environment.NewLine,
+                "      <LastName value=\"Meier\" />" + Environment.NewLine,
+                "      <Age value=\"0\" />" + Environment.NewLine,
+                "      <Street value=\"Main street\" />" + Environment.NewLine,
+                "    </Rowwwww>" + Environment.NewLine,
+                "  </Rowsssssssssss>" + Environment.NewLine,
+                "</DynamicTable>"
+            };
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1),
+                    new DynamicTableColumn<string>("Street"),
+                });
+
+            //import
+            table.FromXml(xmlContent);
+
+            //compare    
+            Assert.AreEqual(0, table.Rows.Count);
+        }
+
+        [Test]
+        public void FromXml_WrongXMLFormat()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+
+            List<string> xmlContent = new List<string>()
+            {
+                "<DynamicTable>" + Environment.NewLine,
+                "  <Rows>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"Hans\" />" + Environment.NewLine,
+                "      <LastName value=\"Mueller\" />" + Environment.NewLine,
+                "      <Age value=\"30\" />" + Environment.NewLine,
+                "      <Street value=\"\" />" + Environment.NewLine,
+                "    </Row>" + Environment.NewLine,
+                "    <Row>" + Environment.NewLine,
+                "      <FirstName value=\"\" />" + Environment.NewLine,
+                "      <LastName value=\"Meier\" />" + Environment.NewLine,
+                "      <Age value=\"0\" />" + Environment.NewLine,
+                "      <Street value=\"Main street\" />"
+            };
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1),
+                    new DynamicTableColumn<string>("Street"),
+                });
+
+            //import
+            try
+            {
+                table.FromXml(xmlContent);
+                Assert.Fail();
+            }
+            catch (XmlException)
+            {
+            }
+        }
+
         #endregion
 
         #region RemoveAllRows
@@ -1063,7 +1815,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void RemoveAllRows_Standard()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
 
             //add values
@@ -1088,7 +1840,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void RemoveAllRows_NotInitialized()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
 
             //reset
             table.RemoveAllRows();
@@ -1105,7 +1857,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void ResetTable_Standard()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
 
             //add values
@@ -1130,7 +1882,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void ResetTable_NotInitialized()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             
             //reset
             table.ResetTable();

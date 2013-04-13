@@ -24,12 +24,15 @@ namespace OS.Toolbox.DynamicObjects
 
         void FromCsv(IEnumerable<string> content);
         void FromCsv(IEnumerable<string> content, bool withHeader, char delimiter, bool useQuotesForFields);
+
+        string AsXml();
+        void FromXml(IEnumerable<string> content);
     }
 
     public enum DynamicTableType
     {        
-        Expandeable,
+        Expandable,
         DefineOnce,
-        WellFormet
+        WellFormed
     }
 }

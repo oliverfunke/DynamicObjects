@@ -38,7 +38,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void UseTable_WithoutColumnDefinition_Expandeable()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
 
             //add values
@@ -106,7 +106,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void UseTable_WithoutColumnDefinition_WellFormet()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.WellFormet);
+            IDynamicTable table = new DynamicTable(DynamicTableType.WellFormed);
             dynamic row;
 
             //add values
@@ -140,7 +140,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void UseTable_PreDefinedColumns_Expandeable()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
 
             //set columns
@@ -226,7 +226,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void UseTable_PreDefinedColumns_WellFormet()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.WellFormet);
+            IDynamicTable table = new DynamicTable(DynamicTableType.WellFormed);
             dynamic row;
 
             //set columns
@@ -273,7 +273,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void ExportAndImport_CSV_Comma_WithHeader_WithQuotes()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
             string csvExport;
 
@@ -341,7 +341,7 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
         [Test]
         public void ExportAndImport_CSV_Semicolon_WithoutHeader_WithoutQuotes()
         {
-            IDynamicTable table = new DynamicTable(DynamicTableType.Expandeable);
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
             dynamic row;
             string csvExport;
 
@@ -381,6 +381,78 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
             using (StreamReader reader = new StreamReader(fileName))
             {
                 table.FromCsv(ReadFile(reader), false, ';', false);
+            }
+
+            //compare
+            row = table.Rows[0];
+            Assert.AreEqual("Hans", row.FirstName);
+            Assert.AreEqual("Mueller", row.LastName);
+            Assert.AreEqual(30, row.Age);
+
+            Assert.AreEqual(2012, row.TimeStamp.Year);
+            Assert.AreEqual(12, row.TimeStamp.Month);
+            Assert.AreEqual(24, row.TimeStamp.Day);
+            Assert.AreEqual(1, row.TimeStamp.Hour);
+            Assert.AreEqual(2, row.TimeStamp.Minute);
+            Assert.AreEqual(3, row.TimeStamp.Second);
+
+            Assert.AreEqual("", row.Street);
+
+            row = table.Rows[1];
+            Assert.AreEqual("", row.FirstName);
+            Assert.AreEqual("Meier", row.LastName);
+            Assert.AreEqual(0, row.Age);
+            Assert.AreEqual(0, row.TimeStamp.Ticks);
+            Assert.AreEqual("Main street", row.Street);
+        }
+
+        #endregion
+
+        #region Export and Import XML
+
+        [Test]
+        public void ExportAndImport_XML()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+            dynamic row;
+            string xmlExport;
+
+            string fileName = _assemblyDirectory + @"\CsvTest.xml";
+
+            //add values
+            row = new ExpandoObject();
+            row.FirstName = "Hans";
+            row.LastName = "Mueller";
+            row.Age = 30;
+            row.TimeStamp = new DateTime(2012, 12, 24, 1, 2, 3);
+            table.AddRow(row);
+
+            row = new ExpandoObject();
+            row.LastName = "Meier";
+            row.Street = "Main street";
+            table.AddRow(row);
+
+            //compare
+            Assert.AreEqual(2, table.Rows.Count);
+            Assert.AreEqual(5, table.Columns.Count);
+
+            //export
+            xmlExport = table.AsXml();
+
+            using (StreamWriter writer = new StreamWriter(fileName))
+            {
+                writer.Write(xmlExport);
+            }
+
+            //remove rows
+            table.RemoveAllRows();
+            Assert.AreEqual(0, table.Rows.Count);
+            Assert.AreEqual(5, table.Columns.Count);
+
+            //import
+            using (StreamReader reader = new StreamReader(fileName))
+            {
+                table.FromXml(ReadFile(reader));
             }
 
             //compare

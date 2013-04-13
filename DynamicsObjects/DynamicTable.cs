@@ -5,6 +5,7 @@ using System.Collections;
 using System.Text;
 using System.Linq;
 using System.Globalization;
+using System.Xml.Linq;
 
 namespace OS.Toolbox.DynamicObjects
 {
@@ -14,7 +15,7 @@ namespace OS.Toolbox.DynamicObjects
 
         public DynamicTable()
         {
-            _tableType = DynamicTableType.Expandeable;
+            _tableType = DynamicTableType.Expandable;
         }
 
         public DynamicTable(DynamicTableType tableType)
@@ -177,7 +178,7 @@ namespace OS.Toolbox.DynamicObjects
                 if (actualColumnNames.Contains(property.Key) == false)
                 {
                     //add column
-                    if (_tableType == DynamicTableType.Expandeable)
+                    if (_tableType == DynamicTableType.Expandable)
                     {
                         Type propertyType = property.Value.GetType();
                         Type tableColumn = typeof(DynamicTableColumn<>).MakeGenericType(propertyType);
@@ -278,7 +279,7 @@ namespace OS.Toolbox.DynamicObjects
         /// 
         /// if the table does not have pre defined columns, then the first added row is used to initalize the table
         /// 
-        /// if 'TableType' is 'Expandeable': 
+        /// if 'TableType' is 'Expandable': 
         /// - new columns will be added if the row contains new elements
         /// - already available column types must match element types
         /// - the row may contain only a part of the elements of the defined columns
@@ -290,7 +291,7 @@ namespace OS.Toolbox.DynamicObjects
         /// - the row may contain only a part of the elements of the defined columns
         /// - for all other elements the default values will be used
         /// 
-        /// if 'TableType' is 'WellFormet': 
+        /// if 'TableType' is 'WellFormed': 
         /// - elements of first row are used to create columns, except the columns are predefined
         /// - available column types must match element types
         /// - the row elements must match with the defined columns
@@ -346,7 +347,7 @@ namespace OS.Toolbox.DynamicObjects
                 else
                 {
                     // - well formet, then throw an error
-                    if(_tableType == DynamicTableType.WellFormet)                       
+                    if(_tableType == DynamicTableType.WellFormed)                       
                     {
                         throw new ArgumentException(String.Format("Row does not contain the column {0}", column.Name));
                     }
@@ -494,7 +495,7 @@ namespace OS.Toolbox.DynamicObjects
                     index = 0;
                     foreach(IDynamicTableColumn colum in _columns)
                     {
-                        values[index] = ToCsvValue(rowDictionary[colum.Name], useQuotesForFields);
+                        values[index] = Converter.ToCsvValue(rowDictionary[colum.Name], useQuotesForFields);
                         index++;
                     }
 
@@ -503,55 +504,6 @@ namespace OS.Toolbox.DynamicObjects
             }           
  
             return csvBuilder.ToString();
-        }
-
-        /// <summary>
-        /// get csv value for this element
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="useQuotesForFields"></param>
-        /// <returns></returns>
-        private static string ToCsvValue(object item, bool useQuotesForFields)
-        {
-            //is null?            
-            if (item == null)
-            {
-                if (useQuotesForFields == true)
-                {
-                    return "\"\"";
-                }
-                else
-                {
-                    return "";
-                }
-            }
-
-            //is string?
-            if (item is string)
-            {
-                if (useQuotesForFields == true)
-                {
-                    return string.Format("\"{0}\"", item.ToString().Replace("\"", "\"\""));
-                }
-                else
-                {
-                    return item.ToString();
-                }
-            }
-
-            //is datetime?
-            if (item is DateTime)
-            {
-                return string.Format("{0:u}", item);    //format: 2013-01-20 12:49:56Z
-            }
-
-            //is a number?
-            double dummy;           
-            if (double.TryParse(item.ToString(), out dummy))
-                return string.Format("{0}", item);
-
-            //standard value
-            return string.Format("{0}", item);
         }
 
         #endregion
@@ -647,7 +599,7 @@ namespace OS.Toolbox.DynamicObjects
                     //first row? then get column names
                     if (columnNames == null)
                     {
-                        columnNames = GetColumnNamesFromCsv(line, withHeader, delimiter);
+                        columnNames = Converter.CsvLineToHeaderElements(line, _columns, withHeader, delimiter);
 
                         //first row with header? then continue with the next line
                         if (withHeader == true)
@@ -657,7 +609,7 @@ namespace OS.Toolbox.DynamicObjects
                     }                    
 
                     //split 
-                    lineValues = GetLineValuesFromCsv(line, delimiter, useQuotesForFields);
+                    lineValues = Converter.CsvLineToValues(line, delimiter, useQuotesForFields);
 
                     //compare element count with column count
                     if (lineValues.Count != _columns.Count)
@@ -673,6 +625,11 @@ namespace OS.Toolbox.DynamicObjects
                     {
                         //get column
                         column = GetColumn(columnNames[index]);
+
+                        if (column == null)
+                        {
+                            throw new FormatException("The column names do not match with the column definitions");
+                        }
 
                         //convert value and add to row
                         if (column.ValueType == typeof(DateTime))
@@ -705,131 +662,204 @@ namespace OS.Toolbox.DynamicObjects
             }            
         }
 
-        /// <summary>
-        /// get the column names
-        /// 
-        /// check if the file contains a header? 
-        /// - yes: import the header and use the names for the parameters + check if the names are unique and equal to the defined column names
-        /// - no: use the defined column names
-        /// </summary>
-        /// <param name="firstLine"></param>
-        /// <param name="withHeader"></param>
-        /// <returns></returns>
-        private List<string> GetColumnNamesFromCsv(string firstLine, bool withHeader, char delimiter)
-        {
-            List<string> columnNames = new List<string>();
+        #endregion
 
-            //without header, then use defined names
-            if (withHeader == false)
-            {
-                foreach (IDynamicTableColumn column in _columns)
-                {
-                    columnNames.Add(column.Name);                 
-                }
-
-                return columnNames;
-            }
-
-            //with header, then extract names
-            columnNames.AddRange(firstLine.Split(new char[] { delimiter }, StringSplitOptions.None));
-
-            //check if the names are unique and equal to the defined column names
-            if (_columns.Count != columnNames.Count)
-            {
-                throw new FormatException("The number of defined columns does not match with the number of columns found in the file");
-            }
-
-            foreach (IDynamicTableColumn column in _columns)
-            {
-                if (columnNames.Contains(column.Name) == false)
-                {
-                    throw new FormatException(string.Format("The defined column {0} does not exist in the file", column.Name));
-                }
-            }
-
-            //return
-            return columnNames;
-        }
+        #region XML Export
 
         /// <summary>
-        /// split values
+        /// convert the objet list into a string in xml format        
         /// </summary>
-        /// <param name="line"></param>
-        /// <param name="delimiter"></param>
-        /// <param name="useQuotes"></param>
         /// <returns></returns>
-        private List<string> GetLineValuesFromCsv(string line, char delimiter, bool useQuotes)
+        public string AsXml()
         {
-            List<string> lineValues = new List<string>();
+            XElement rootElement;
+            XElement rowsElement;
+            XElement rowElement;
 
-            bool elementStarted = false;
-            bool previouslyValueInsideElementWasQuote = false;
-            StringBuilder partialElement = new StringBuilder();
-                        
-            //go over all chars
-            // - single quote? then start or finish element
-            // - double quote? convert to single quote and use it as normal char
-            // - separator: use this a splitter, except if it is inside a element
-            foreach (char value in line.ToArray())
+            //table exists?
+            if (_columns == null)
             {
-                //quote found at previously element? (and we are inside an element)
-                // - single quote, then ignore quote and close element
-                // - double quote, then add single quote
-                if (previouslyValueInsideElementWasQuote == true)
-                {
-                    //reset
-                    previouslyValueInsideElementWasQuote = false;
-
-                    //actual value is quote? then we have a double quote
-                    if (value == '\"')
-                    {
-                        partialElement.Append('\"');
-                        continue;
-                    }
-                    //no quote, then the previously was an end quote for the element
-                    else
-                    {
-                        elementStarted = false;
-                    }
-                }
-
-                //separator found? then add temp element to list
-                if ((value == delimiter) && (elementStarted == false))
-                {
-                    lineValues.Add(partialElement.ToString());
-
-                    partialElement.Clear();
-                    continue;
-                }
-
-                //quote found and actually we are not inside an element, then ignore quote and get ino the element
-                if ((value == '\"') && (elementStarted == false))
-                {
-                    elementStarted = true;
-                    continue;
-                }
-
-                //quote found and actually we are inside an element
-                // - remember that a quote was found because next value is importand to see whether it was a single or double quote
-                if ((value == '\"') && (elementStarted == true))
-                {
-                    previouslyValueInsideElementWasQuote = true;
-                    continue;
-                }
-
-                //add value to temp element
-                partialElement.Append(value);                
+                return "";
             }
 
-            //add last element to list            
-            lineValues.Add(partialElement.ToString());                
-            
-            //return
-            return lineValues;
+            //create root element
+            rootElement = new XElement("DynamicTable");
+
+            //create rows element
+            rowsElement = new XElement("Rows");
+            rootElement.Add(rowsElement);
+
+            //content
+            if (_rows != null)
+            {
+                foreach (dynamic row in _rows)
+                {
+                    IDictionary<string, object> rowDictionary = row;
+
+                    rowElement = new XElement("Row");
+                    rowsElement.Add(rowElement);
+
+                    foreach (IDynamicTableColumn colum in _columns)
+                    {
+                        rowElement.Add(new XElement(colum.Name, new XAttribute("value", Converter.ToXmlValue(rowDictionary[colum.Name]))));
+                    }
+                }
+            }
+
+            return rootElement.ToString();
         }
 
         #endregion
-        
+
+        #region XML Import
+
+        /// <summary>
+        /// sets all values according to the csv file content
+        /// 
+        /// Exceptions
+        ///     NotSupportedException: the table already contains data, no columns defined
+        ///     ArgumentException: input parameter is wrong (null, empty, missing)
+        ///     FormatException: input parameter has wrong format
+        ///     XmlException: wrong format 
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="withHeader"></param>
+        /// <param name="delimiter"></param>
+        /// <param name="useQuotesForFields"></param>
+        public void FromXml(IEnumerable<string> content)
+        {
+            bool rollbackNeeded = true;
+
+            string fileContent;
+
+            XDocument document;
+            XAttribute propertyAttribute;
+
+            List<string> propertyNames = null;
+            List<string> propertyValues = null;
+
+            dynamic newRow;
+            IDictionary<string, object> newRowDictionary;
+            int index;
+
+            IDynamicTableColumn column;
+            object convertedElement;
+
+            //check status: already rows available
+            if (_rows != null)
+            {
+                if (_rows.Count > 0)
+                {
+                    throw new NotSupportedException("The table already contains rows");
+                }
+            }
+
+            //check status: columns defined
+            if (_columns == null)
+            {
+                throw new NotSupportedException("The table contains no column definitions");
+            }
+
+            if (_columns.Count == 0)
+            {
+                throw new NotSupportedException("The table contains no column definitions");
+            }
+
+            //check input
+            if (content == null)
+            {
+                return;
+            }
+
+            //if an error occurs all rows should be removed, therefore use a try finally block for the whole method
+            try
+            {
+                //load document
+                fileContent = string.Concat(content);
+
+                if (string.IsNullOrEmpty(fileContent))
+                {
+                    return;
+                }
+
+                document = XDocument.Parse(fileContent);
+
+                //get all rows
+                var rowElements = (from property in document.Descendants("Row")
+                                   select property).ToList();
+
+                //loop over rows
+                foreach (XElement rowElement in rowElements)                
+                {
+                    //get values of row
+                    propertyNames = new List<string>();
+                    propertyValues = new List<string>();
+
+                    foreach (XElement propertyElement in rowElement.Elements())
+                    {
+                        propertyAttribute = propertyElement.Attribute("value");
+                        if (propertyAttribute == null)
+                        {
+                            throw new FormatException("The 'value' attribute was not found");
+                        }
+
+                        propertyNames.Add(propertyElement.Name.ToString());
+                        propertyValues.Add(propertyAttribute.Value);
+                    }
+
+                    //compare element count with column count
+                    if (propertyNames.Count != _columns.Count)
+                    {
+                        throw new FormatException("The number of elements in the row does not match with the number of columns.");
+                    }
+
+                    //create the row and try to convert the parameters to the specific type
+                    newRow = new ExpandoObject();
+                    newRowDictionary = newRow;
+
+                    for (index = 0; index < propertyNames.Count; index++)
+                    {
+                        //get column
+                        column = GetColumn(propertyNames[index]);
+
+                        if (column == null)
+                        {
+                            throw new FormatException("The column names do not match with the column definitions");
+                        }
+
+                        //convert value and add to row
+                        if (column.ValueType == typeof(DateTime))
+                        {
+                            convertedElement = DateTime.ParseExact(propertyValues[index], "u", CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            convertedElement = Convert.ChangeType(propertyValues[index], column.ValueType);
+                        }
+
+                        //add to row
+                        newRowDictionary.Add(propertyNames[index], convertedElement);
+                    }
+
+                    // - add row to list
+                    AddRow(newRow);
+                }
+
+                //finish successful
+                rollbackNeeded = false;
+            }
+            finally
+            {
+                //rollback
+                if (rollbackNeeded == true)
+                {
+                    RemoveAllRows();
+                }
+            }
+        }
+
+        #endregion
+
         #region Member
 
         private List<IDynamicTableColumn> _columns;
