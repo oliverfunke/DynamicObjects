@@ -5,6 +5,7 @@ using System.Dynamic;
 using System.Collections.Generic;
 using System;
 using System.Xml;
+using System.Data;
 
 namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
 {
@@ -1810,6 +1811,583 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
 
         #endregion
 
+        #region AsDataTable
+
+        [Test]
+        public void AsDataTable_Standard()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+            dynamic row;
+            DataTable dataTable;
+
+            //add values
+            row = new ExpandoObject();
+            row.FirstName = "Hans";
+            row.LastName = "Mueller";
+            row.Age = 30;
+            table.AddRow(row);
+
+            row = new ExpandoObject();
+            row.LastName = "Meier";
+            row.Street = "Main street";
+            row.Birthday = new DateTime(2001, 12, 20);
+            table.AddRow(row);
+
+            //get data table
+            dataTable = table.AsDataTable();
+
+            //compare
+            Assert.AreEqual(5, dataTable.Columns.Count);
+            Assert.AreEqual("FirstName", dataTable.Columns[0].ColumnName);
+            Assert.AreEqual("LastName", dataTable.Columns[1].ColumnName);
+            Assert.AreEqual("Age", dataTable.Columns[2].ColumnName);
+            Assert.AreEqual("Street", dataTable.Columns[3].ColumnName);
+            Assert.AreEqual("Birthday", dataTable.Columns[4].ColumnName);
+            Assert.AreEqual("System.String", dataTable.Columns[0].DataType.ToString());
+            Assert.AreEqual("System.String", dataTable.Columns[1].DataType.ToString());
+            Assert.AreEqual("System.Int32", dataTable.Columns[2].DataType.ToString());
+            Assert.AreEqual("System.String", dataTable.Columns[3].DataType.ToString());
+            Assert.AreEqual("System.DateTime", dataTable.Columns[4].DataType.ToString());
+
+            Assert.AreEqual(2, dataTable.Rows.Count);
+
+            Assert.AreEqual("Hans", dataTable.Rows[0].ItemArray[0]);
+            Assert.AreEqual("Mueller", dataTable.Rows[0].ItemArray[1]);
+            Assert.AreEqual(30, dataTable.Rows[0].ItemArray[2]);
+            Assert.AreEqual(DBNull.Value, dataTable.Rows[0].ItemArray[3]);
+            Assert.AreEqual(new DateTime(0), dataTable.Rows[0].ItemArray[4]);
+
+            Assert.AreEqual(DBNull.Value, dataTable.Rows[1].ItemArray[0]);
+            Assert.AreEqual("Meier", dataTable.Rows[1].ItemArray[1]);
+            Assert.AreEqual(0, dataTable.Rows[1].ItemArray[2]);
+            Assert.AreEqual("Main street", dataTable.Rows[1].ItemArray[3]);
+            Assert.AreEqual(new DateTime(2001, 12, 20), dataTable.Rows[1].ItemArray[4]);            
+        }
+
+        [Test]
+        public void AsDataTable_Standard_PreDefineColumns()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+            dynamic row;
+            DataTable dataTable;
+
+            //set columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName", ""),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1)
+                });
+
+            //add values
+            row = new ExpandoObject();
+            row.FirstName = "Hans";
+            row.LastName = "Mueller";
+            row.Age = 30;
+            table.AddRow(row);
+
+            row = new ExpandoObject();
+            row.LastName = "Meier";
+            table.AddRow(row);
+
+            //get data table
+            dataTable = table.AsDataTable();
+
+            //compare
+            Assert.AreEqual(3, dataTable.Columns.Count);
+            Assert.AreEqual("FirstName", dataTable.Columns[0].ColumnName);
+            Assert.AreEqual("LastName", dataTable.Columns[1].ColumnName);
+            Assert.AreEqual("Age", dataTable.Columns[2].ColumnName);
+            Assert.AreEqual("System.String", dataTable.Columns[0].DataType.ToString());
+            Assert.AreEqual("System.String", dataTable.Columns[1].DataType.ToString());
+            Assert.AreEqual("System.Int32", dataTable.Columns[2].DataType.ToString());
+            
+            Assert.AreEqual(2, dataTable.Rows.Count);
+
+            Assert.AreEqual("Hans", dataTable.Rows[0].ItemArray[0]);
+            Assert.AreEqual("Mueller", dataTable.Rows[0].ItemArray[1]);
+            Assert.AreEqual(30, dataTable.Rows[0].ItemArray[2]);
+            
+            Assert.AreEqual("", dataTable.Rows[1].ItemArray[0]);
+            Assert.AreEqual("Meier", dataTable.Rows[1].ItemArray[1]);
+            Assert.AreEqual(-1, dataTable.Rows[1].ItemArray[2]);            
+        }
+
+        [Test]
+        public void AsDataTable_NotInitialized()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+            DataTable dataTable;
+
+            //get csv
+            dataTable = table.AsDataTable();
+
+            //compare
+            Assert.AreEqual(null, dataTable);
+        }
+
+        [Test]
+        public void AsDataTable_Empty()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+            DataTable dataTable;
+
+            //set columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName", ""),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1)
+                });
+
+            //get csv
+            dataTable = table.AsDataTable();
+
+            //compare            
+            Assert.AreEqual(3, dataTable.Columns.Count);
+            Assert.AreEqual("FirstName", dataTable.Columns[0].ColumnName);
+            Assert.AreEqual("LastName", dataTable.Columns[1].ColumnName);
+            Assert.AreEqual("Age", dataTable.Columns[2].ColumnName);
+            Assert.AreEqual("System.String", dataTable.Columns[0].DataType.ToString());
+            Assert.AreEqual("System.String", dataTable.Columns[1].DataType.ToString());
+            
+            Assert.AreEqual(0, dataTable.Rows.Count);            
+        }
+
+        #endregion
+
+        #region FromXml
+
+        [Test]
+        public void FromDataTable_Standard_PreDefinedTable()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+            dynamic row;          
+            
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age"),
+                    new DynamicTableColumn<DateTime>("Birthday"),
+                });
+
+            //import
+            table.FromDataTable(CreateSimpleTestData());
+
+            //compare    
+            Assert.AreEqual(2, table.Rows.Count);
+
+            row = table.Rows[0];
+            Assert.AreEqual("Hans", row.FirstName);
+            Assert.AreEqual("Mueller", row.LastName);
+            Assert.AreEqual(30, row.Age);
+            Assert.AreEqual(new DateTime(2001, 12, 20), row.Birthday);
+
+            row = table.Rows[1];
+            Assert.AreEqual(null, row.FirstName);
+            Assert.AreEqual("Meier", row.LastName);
+            Assert.AreEqual(0, row.Age);
+            Assert.AreEqual(new DateTime(0), row.Birthday);
+        }
+
+        [Test]
+        public void FromDataTable_Standard_NotPreDefined()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+            dynamic row;
+
+            //import
+            table.FromDataTable(CreateSimpleTestData());
+
+            //compare    
+            Assert.AreEqual(2, table.Rows.Count);
+
+            row = table.Rows[0];
+            Assert.AreEqual("Hans", row.FirstName);
+            Assert.AreEqual("Mueller", row.LastName);
+            Assert.AreEqual(30, row.Age);
+            Assert.AreEqual(new DateTime(2001, 12, 20), row.Birthday);
+
+            row = table.Rows[1];
+            Assert.AreEqual(null, row.FirstName);
+            Assert.AreEqual("Meier", row.LastName);
+            Assert.AreEqual(0, row.Age);
+            Assert.AreEqual(new DateTime(0), row.Birthday);
+        }
+
+        [Test]
+        public void FromDataTable_OtherSortOrderInFile()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+            dynamic row;          
+            
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),                                       
+                    new DynamicTableColumn<DateTime>("Birthday"),
+                    new DynamicTableColumn<int>("Age"),
+                    new DynamicTableColumn<string>("LastName")
+                });
+
+            //import
+            table.FromDataTable(CreateSimpleTestData());
+
+            //compare    
+            Assert.AreEqual(2, table.Rows.Count);
+
+            row = table.Rows[0];
+            Assert.AreEqual("Hans", row.FirstName);
+            Assert.AreEqual("Mueller", row.LastName);
+            Assert.AreEqual(30, row.Age);
+            Assert.AreEqual(new DateTime(2001, 12, 20), row.Birthday);
+
+            row = table.Rows[1];
+            Assert.AreEqual(null, row.FirstName);
+            Assert.AreEqual("Meier", row.LastName);
+            Assert.AreEqual(0, row.Age);
+            Assert.AreEqual(new DateTime(0), row.Birthday);
+        }
+
+        [Test]
+        public void FromDataTable_Empty_NoColumns()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1),
+                    new DynamicTableColumn<DateTime>("Birthday"),
+                });
+
+            //import
+            table.FromDataTable(new DataTable());
+
+            //compare    
+            Assert.AreEqual(0, table.Rows.Count);
+        }
+
+        [Test]
+        public void FromDataTable_Empty_NoRows_PreDefinedTable()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+
+            DataTable data;
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1),
+                    new DynamicTableColumn<DateTime>("Birthday"),
+                });
+
+            //prepare data
+            data = CreateSimpleTestData();
+            data.Rows.Clear();
+
+            //import
+            table.FromDataTable(data);
+
+            //compare    
+            Assert.AreEqual(0, table.Rows.Count);
+        }
+
+        [Test]
+        public void FromDataTable_Empty_NoRows_NotPreDefined()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+
+            DataTable data;
+
+            //prepare data
+            data = CreateSimpleTestData();
+            data.Rows.Clear();
+
+            //import
+            table.FromDataTable(data);
+
+            //compare    
+            Assert.AreEqual(null, table.Columns);
+            Assert.AreEqual(null, table.Rows);
+        }
+
+        [Test]
+        public void FromDataTable_Null()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1),
+                    new DynamicTableColumn<string>("Street"),
+                });
+
+            //import
+            table.FromDataTable(null);
+
+            //compare    
+            Assert.AreEqual(0, table.Rows.Count);
+        }
+
+        [Test]
+        public void FromDataTable_AlreadyContainsRows()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age", -1),
+                    new DynamicTableColumn<DateTime>("Birthday"),
+                });
+
+            //import
+            table.FromDataTable(CreateSimpleTestData());
+
+            //compare    
+            Assert.AreEqual(2, table.Rows.Count);
+
+            //import again
+            try
+            {
+                table.FromDataTable(CreateSimpleTestData());
+                Assert.Fail();
+            }
+            catch (NotSupportedException)
+            {
+            }
+        }
+
+        [Test]
+        public void FromDataTable_WrongNumberOfColumns_WellFormed()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.WellFormed);
+            
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age"),
+                });
+
+            //import
+            try
+            {
+                table.FromDataTable(CreateSimpleTestData());
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            {
+            }
+
+            //compare    
+            Assert.AreEqual(0, table.Rows.Count);
+        }
+
+        [Test]
+        public void FromDataTable_WrongNumberOfColumns_DefineOnce()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.DefineOnce);
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age"),
+                });
+
+            //import
+            try
+            {
+                table.FromDataTable(CreateSimpleTestData());
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            {
+            }
+
+            //compare    
+            Assert.AreEqual(0, table.Rows.Count);
+        }
+
+        [Test]
+        public void FromDataTable_WrongNumberOfColumns_Expandable()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+            dynamic row;
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastName"),
+                    new DynamicTableColumn<int>("Age"),                    
+                });
+
+            //import
+            table.FromDataTable(CreateSimpleTestData());
+
+            //compare    
+            Assert.AreEqual(2, table.Rows.Count);
+
+            row = table.Rows[0];
+            Assert.AreEqual("Hans", row.FirstName);
+            Assert.AreEqual("Mueller", row.LastName);
+            Assert.AreEqual(30, row.Age);
+            Assert.AreEqual(new DateTime(2001, 12, 20), row.Birthday);
+
+            row = table.Rows[1];
+            Assert.AreEqual(null, row.FirstName);
+            Assert.AreEqual("Meier", row.LastName);
+            Assert.AreEqual(0, row.Age);
+            Assert.AreEqual(new DateTime(0), row.Birthday);
+        }
+
+        [Test]
+        public void FromDataTable_WrongType()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);       
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<int>("LastName"),
+                    new DynamicTableColumn<int>("Age"),
+                    new DynamicTableColumn<DateTime>("Birthday"),
+                });
+
+            //import
+            try
+            {
+                table.FromDataTable(CreateSimpleTestData());
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            {
+            }
+
+            //compare    
+            Assert.AreEqual(0, table.Rows.Count);
+        }
+
+        [Test]
+        public void FromDataTable_WrongColumnNames_WellFormed()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.WellFormed);
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastNameeeeee"),
+                    new DynamicTableColumn<int>("Age"),
+                    new DynamicTableColumn<DateTime>("Birthday"),
+                });
+
+            //import
+            try
+            {
+                table.FromDataTable(CreateSimpleTestData());
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            {
+            }
+        }
+
+        [Test]
+        public void FromDataTable_WrongColumnNames_DefineOnce()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.DefineOnce);
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastNameeeeee"),
+                    new DynamicTableColumn<int>("Age"),
+                    new DynamicTableColumn<DateTime>("Birthday"),
+                });
+
+            //import
+            try
+            {
+                table.FromDataTable(CreateSimpleTestData());
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            {
+            }
+        }
+
+        [Test]
+        public void FromDataTable_WrongColumnNames_Expandable()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+            dynamic row;
+
+            //columns
+            table.PreDefineColumns(
+                new List<IDynamicTableColumn>()
+                {
+                    new DynamicTableColumn<string>("FirstName"),
+                    new DynamicTableColumn<string>("LastNameeeeee"),
+                    new DynamicTableColumn<int>("Age"),
+                    new DynamicTableColumn<DateTime>("Birthday"),
+                });
+
+            //import
+            table.FromDataTable(CreateSimpleTestData());
+
+            //compare    
+            Assert.AreEqual(2, table.Rows.Count);
+
+            row = table.Rows[0];
+            Assert.AreEqual("Hans", row.FirstName);
+            Assert.AreEqual("Mueller", row.LastName);
+            Assert.AreEqual(30, row.Age);
+            Assert.AreEqual(new DateTime(2001, 12, 20), row.Birthday);
+            Assert.AreEqual(null, row.LastNameeeeee);
+
+            row = table.Rows[1];
+            Assert.AreEqual(null, row.FirstName);
+            Assert.AreEqual("Meier", row.LastName);
+            Assert.AreEqual(0, row.Age);
+            Assert.AreEqual(new DateTime(0), row.Birthday);
+            Assert.AreEqual(null, row.LastNameeeeee);
+        }
+
+        #endregion
+
         #region RemoveAllRows
 
         [Test]
@@ -1890,6 +2468,59 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
             //compare
             Assert.AreEqual(null, table.Rows);
             Assert.AreEqual(null, table.Columns);
+        }
+
+        #endregion
+
+        #region helper - test data - data table
+
+        private static DataTable CreateSimpleTestData()
+        {
+            DataTable dataTable = null;
+            DataColumn dataColumn = null;
+            DataRow dataRow = null;
+
+            //create table
+            dataTable = new DataTable("test");
+
+            //create columns
+            dataColumn = new DataColumn();
+            dataColumn.ColumnName = "FirstName";
+            dataColumn.DataType = System.Type.GetType("System.String");
+            dataTable.Columns.Add(dataColumn);
+
+            dataColumn = new DataColumn();
+            dataColumn.ColumnName = "LastName";
+            dataColumn.DataType = System.Type.GetType("System.String");
+            dataTable.Columns.Add(dataColumn);
+
+            dataColumn = new DataColumn();
+            dataColumn.ColumnName = "Age";
+            dataColumn.DataType = System.Type.GetType("System.Int32");
+            dataTable.Columns.Add(dataColumn);
+
+            dataColumn = new DataColumn();
+            dataColumn.ColumnName = "Birthday";
+            dataColumn.DataType = System.Type.GetType("System.DateTime");
+            dataTable.Columns.Add(dataColumn);
+            
+            //create rows
+            dataRow = dataTable.NewRow();
+            dataRow["FirstName"] = "Hans";
+            dataRow["LastName"] = "Mueller";
+            dataRow["Age"] = 30;
+            dataRow["Birthday"] = new DateTime(2001, 12, 20);
+            dataTable.Rows.Add(dataRow);
+
+            dataRow = dataTable.NewRow();
+            dataRow["FirstName"] = DBNull.Value;
+            dataRow["LastName"] = "Meier";
+            dataRow["Age"] = 0;
+            dataRow["Birthday"] = new DateTime(0);
+            dataTable.Rows.Add(dataRow);
+
+            //return
+            return dataTable;
         }
 
         #endregion

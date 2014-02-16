@@ -6,6 +6,7 @@ using System.Text;
 using System.Linq;
 using System.Globalization;
 using System.Xml.Linq;
+using System.Data;
 
 namespace OS.Toolbox.DynamicObjects
 {
@@ -336,9 +337,12 @@ namespace OS.Toolbox.DynamicObjects
                 if (rowDictionary.ContainsKey(column.Name) == true)
                 {
                     // - check type
-                    if (rowDictionary[column.Name].GetType() != column.ValueType)
+                    if (rowDictionary[column.Name] != null)
                     {
-                        throw new ArgumentException(String.Format("Row type does not match with column type of column {0}", column.Name));                    
+                        if (rowDictionary[column.Name].GetType() != column.ValueType)
+                        {
+                            throw new ArgumentException(String.Format("Row type does not match with column type of column {0}", column.Name));
+                        }
                     }
 
                     // - add
@@ -667,7 +671,7 @@ namespace OS.Toolbox.DynamicObjects
         #region XML Export
 
         /// <summary>
-        /// convert the objet list into a string in xml format        
+        /// convert the objet into a string in xml format        
         /// </summary>
         /// <returns></returns>
         public string AsXml()
@@ -839,6 +843,165 @@ namespace OS.Toolbox.DynamicObjects
 
                         //add to row
                         newRowDictionary.Add(propertyNames[index], convertedElement);
+                    }
+
+                    // - add row to list
+                    AddRow(newRow);
+                }
+
+                //finish successful
+                rollbackNeeded = false;
+            }
+            finally
+            {
+                //rollback
+                if (rollbackNeeded == true)
+                {
+                    RemoveAllRows();
+                }
+            }
+        }
+
+        #endregion
+
+        #region DataTable Export
+
+        /// <summary>
+        /// convert the object into a data table
+        /// </summary>
+        /// <returns></returns>
+        public DataTable AsDataTable()
+        {
+            DataTable dataTable = null;
+            DataColumn dataColumn = null;
+            DataRow dataRow = null;            
+
+            //table exists?
+            if (_columns == null)
+            {
+                return null;
+            }
+
+            //create data table
+            dataTable = new DataTable("DynamicTable");            
+
+            //add all columns
+            foreach (IDynamicTableColumn colum in _columns)
+            {
+                dataColumn = new DataColumn();
+
+                dataColumn.ColumnName = colum.Name;
+                dataColumn.DataType = colum.ValueType;
+
+                dataColumn.AllowDBNull = true;
+                dataColumn.ReadOnly = false;
+                dataColumn.Unique = false;
+                dataColumn.AutoIncrement = false;
+
+                dataTable.Columns.Add(dataColumn);
+            }
+
+            //add all rows
+            foreach (dynamic row in _rows)
+            {
+                dataRow = dataTable.NewRow();
+                
+                IDictionary<string, object> rowDictionary = row;
+
+                foreach (IDynamicTableColumn colum in _columns)
+                {
+                    dataRow[colum.Name] = rowDictionary[colum.Name];                    
+                }
+
+                dataTable.Rows.Add(dataRow);
+            }
+                    
+
+            //return
+            return dataTable;
+        }
+
+        #endregion
+
+        #region DataTable Import
+
+        /// <summary>
+        /// sets all values according to the data table content
+        /// 
+        /// if the data table is empty, the data will not be imported and therefore no columns will be added
+        /// 
+        /// Exceptions
+        ///     NotSupportedException: the table already contains data, no columns defined
+        ///     ArgumentException: input parameter is wrong (null, empty, missing)
+        ///     FormatException: input parameter has wrong format
+        /// </summary>
+        public void FromDataTable(DataTable data)
+        {
+            bool rollbackNeeded = true;
+            
+            List<string> columnNames = null;
+            
+            dynamic newRow;
+            IDictionary<string, object> newRowDictionary;
+            int index;
+
+            //check status: already rows available
+            if (_rows != null)
+            {
+                if (_rows.Count > 0)
+                {
+                    throw new NotSupportedException("The table already contains rows");
+                }
+            }
+
+            //check input
+            if (data == null)
+            {
+                return;
+            }
+
+            if(data.Columns == null)
+            {
+                return;
+            }
+
+            if (data.Columns.Count < 1)
+            {
+                return;
+            }
+
+            //if an error occurs all rows should be removed, therefore use a try finally block for the whole method
+            try
+            {
+                //loop over rows
+                foreach (DataRow dataRow in data.Rows)
+                {
+                    //first row? then get column names
+                    if (columnNames == null)
+                    {
+                        columnNames = new List<string>();
+
+                        foreach(DataColumn dataColumn in data.Columns)
+                        {
+                            columnNames.Add(dataColumn.ColumnName);                        
+                        }                        
+                    }
+
+                    //create row
+                    newRow = new ExpandoObject();
+                    newRowDictionary = newRow;
+
+                    for (index = 0; index < columnNames.Count; index++)
+                    {
+                        //add to row
+                        if (dataRow[columnNames[index]] != DBNull.Value)
+                        {
+                            newRowDictionary.Add(columnNames[index], dataRow[columnNames[index]]);
+                        }
+                        else
+                        {
+                            newRowDictionary.Add(columnNames[index], Convert.ChangeType(null, data.Columns[columnNames[index]].DataType));
+                        }
                     }
 
                     // - add row to list

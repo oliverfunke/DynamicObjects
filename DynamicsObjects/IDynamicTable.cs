@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 
 namespace OS.Toolbox.DynamicObjects
 {
@@ -27,6 +28,9 @@ namespace OS.Toolbox.DynamicObjects
 
         string AsXml();
         void FromXml(IEnumerable<string> content);
+
+        DataTable AsDataTable();
+        void FromDataTable(DataTable data);
     }
 
     public enum DynamicTableType

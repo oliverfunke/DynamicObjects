@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Data;
 
 namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
 {
@@ -472,6 +473,68 @@ namespace OS.Toolbox.DynamicObjectsUnitTest.DynamicTableUnitTest
 
             row = table.Rows[1];
             Assert.AreEqual("", row.FirstName);
+            Assert.AreEqual("Meier", row.LastName);
+            Assert.AreEqual(0, row.Age);
+            Assert.AreEqual(0, row.TimeStamp.Ticks);
+            Assert.AreEqual("Main street", row.Street);
+        }
+
+        #endregion
+
+        #region Export and Import DataTable
+
+        [Test]
+        public void ExportAndImport_DataTable()
+        {
+            IDynamicTable table = new DynamicTable(DynamicTableType.Expandable);
+            dynamic row;
+            DataTable data;
+            
+            //add values
+            row = new ExpandoObject();
+            row.FirstName = "Hans";
+            row.LastName = "Mueller";
+            row.Age = 30;
+            row.TimeStamp = new DateTime(2012, 12, 24, 1, 2, 3);
+            table.AddRow(row);
+
+            row = new ExpandoObject();
+            row.LastName = "Meier";
+            row.Street = "Main street";
+            table.AddRow(row);
+
+            //compare
+            Assert.AreEqual(2, table.Rows.Count);
+            Assert.AreEqual(5, table.Columns.Count);
+
+            //export
+            data = table.AsDataTable();
+            
+            //remove rows
+            table.RemoveAllRows();
+            Assert.AreEqual(0, table.Rows.Count);
+            Assert.AreEqual(5, table.Columns.Count);
+
+            //import
+            table.FromDataTable(data);
+
+            //compare
+            row = table.Rows[0];
+            Assert.AreEqual("Hans", row.FirstName);
+            Assert.AreEqual("Mueller", row.LastName);
+            Assert.AreEqual(30, row.Age);
+
+            Assert.AreEqual(2012, row.TimeStamp.Year);
+            Assert.AreEqual(12, row.TimeStamp.Month);
+            Assert.AreEqual(24, row.TimeStamp.Day);
+            Assert.AreEqual(1, row.TimeStamp.Hour);
+            Assert.AreEqual(2, row.TimeStamp.Minute);
+            Assert.AreEqual(3, row.TimeStamp.Second);
+
+            Assert.AreEqual(null, row.Street);
+
+            row = table.Rows[1];
+            Assert.AreEqual(null, row.FirstName);
             Assert.AreEqual("Meier", row.LastName);
             Assert.AreEqual(0, row.Age);
             Assert.AreEqual(0, row.TimeStamp.Ticks);
